@@ -1,0 +1,31 @@
+@import '../assets/scss/partials/layout.vars';
+@import '../assets/scss/partials/responsive.partial';
+
+.layout-overflow {
+    overflow: hidden;
+}
+
+.layout-canvas {
+  background: #fff;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+   position: relative;
+   left: 0;
+   transition: tranform 250ms ease;
+   transform: translate3d(0,0,0);
+   width: 100%;
+
+  &.nav-open {
+    transform: translate3d(270px,0,0);
+  }
+}
+.layout-view {
+  padding: $padding-screen-small;
+
+
+  @include mq($large) {
+    margin: 0 auto;
+    max-width: 960px;
+    padding: $padding-screen-large;
+  }
+}
