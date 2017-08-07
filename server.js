@@ -7,16 +7,16 @@ const cors = require('cors');
 
 const config = require('./server/config');
 
-mongoose.connect(config.MONGO_URL);
+mongoose.connect(config.MONGO_URI, { useMongoClient: true });
 const monDb = mongoose.connection;
 
 
 monDb.on('error', function () {
-  console.error('MongoDB Connection Error. Please make sure that', config.MONGO_URL, 'is running.');
+  console.error('MongoDB Connection Error. Please make sure that', config.MONGO_URI, 'is running.');
 });
 
 monDb.once('open', function callback () {
-   console.info('Connected to MongoDB:', config.MONGO_URL);
+   console.info('Connected to MongoDB:', config.MONGO_URI);
 });
 
 
