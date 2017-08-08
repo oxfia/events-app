@@ -9,6 +9,13 @@ import { EventComponent } from './pages/event/event.component';
 
 const routes: Routes = [
   {
+    path: 'event/:id',
+    component: EventComponent,
+    canActivate: [
+      AuthGuard
+    ]
+  },
+  {
     path: '',
     component: HomeComponent
   },
