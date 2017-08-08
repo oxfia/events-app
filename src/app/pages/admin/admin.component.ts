@@ -19,7 +19,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   filteredEvents: EventModel[];
   loading: boolean;
   error: boolean;
-  query: '';
+  query = '';
 
   constructor(
     private title: Title,

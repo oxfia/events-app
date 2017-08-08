@@ -10,7 +10,7 @@ module.exports = function(app, config) {
       cache: true,
       rateLimit: true,
       jwksRequestPerMinute: 5,
-      jwksUri: `https://${config.AUTH0_DOMAIN}/.well-known/jwks/json`
+      jwksUri: `https://${config.AUTH0_DOMAIN}/.well-known/jwks.json`
    }),
    aud: config.AUTH0_API_AUDIENCE,
    issuer: `https://${config.AUTH0_DOMAIN}/`,

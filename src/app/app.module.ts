@@ -20,6 +20,7 @@ import { LoadingComponent } from './core/loading.component';
 import { UtilsService } from './core/utils.service';
 import { FilterSortService } from './core/filter-sort.service';
 import { AdminComponent } from './pages/admin/admin.component';
+import { EventComponent } from './pages/event/event.component';
 
 @NgModule({
 declarations: [
@@ -29,7 +30,8 @@ declarations: [
     FooterComponent,
     CallbackComponent,
     LoadingComponent,
-    AdminComponent
+    AdminComponent,
+    EventComponent
   ],
   imports: [
     BrowserModule,
