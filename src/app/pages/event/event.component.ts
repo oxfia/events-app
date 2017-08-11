@@ -57,7 +57,7 @@ export class EventComponent implements OnInit, OnDestroy {
               this.event = res;
               this._setPageTitle(this.event.title);
               this.loading = false;
-              this.eventPast = this.utils.eventPast(this.event.endDateTime);
+              this.eventPast = this.utils.eventPast(this.event.endDatetime);
             },
             err => {
               console.error(err);

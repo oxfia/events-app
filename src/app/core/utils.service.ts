@@ -6,30 +6,22 @@ export class UtilsService {
 
   constructor(private datePipe: DatePipe) { }
 
-
   isLoaded(loading: boolean): boolean {
     return loading === false;
-  }
-
-  tabIs(currentTab: string, tab: string): boolean {
-    // Check if current tab is tab name
-    return currentTab === tab;
   }
 
   eventDates(start, end): string {
     // Display single-day events as "Jan 7, 2018"
     // Display multi-day events as "Aug 12, 2017 - Aug 13, 2017"
-   const startDate = this.datePipe.transform(start, 'mediumDate');
-   const endDate = this.datePipe.transform(end, 'mediumDate');
+    const startDate = this.datePipe.transform(start, 'mediumDate');
+    const endDate = this.datePipe.transform(end, 'mediumDate');
 
-
-   if (startDate === endDate) {
-     return startDate;
-   } else {
-     return `${startDate} - ${endDate}`;
-   }
+    if (startDate === endDate) {
+      return startDate;
+    } else {
+      return `${startDate} - ${endDate}`;
+    }
   }
-
 
   eventDatesTimes(start, end): string {
     // Display single-day events as "1/7/2018, 5:30 PM - 7:30 PM"
@@ -39,7 +31,6 @@ export class UtilsService {
     const endDate = this.datePipe.transform(end, 'shortDate');
     const endTime = this.datePipe.transform(end, 'shortTime');
 
-
     if (startDate === endDate) {
       return `${startDate}, ${startTime} - ${endTime}`;
     } else {
@@ -47,12 +38,15 @@ export class UtilsService {
     }
   }
 
- eventPast(eventEnd): boolean {
-   // Check if event has already ended
-   const now = new Date();
-   const then = new Date(eventEnd.toString());
-   return now >= then;
- }
+  eventPast(eventEnd): boolean {
+    // Check if event has already ended
+    const now = new Date();
+    const then = new Date(eventEnd.toString());
+    return now >= then;
+  }
 
-
+  tabIs(currentTab: string, tab: string): boolean {
+    // Check if current tab is tab name
+    return currentTab === tab;
+  }
 }
