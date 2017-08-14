@@ -49,4 +49,23 @@ export class UtilsService {
     // Check if current tab is tab name
     return currentTab === tab;
   }
+
+  displayCount(guests: number): string {
+    // Example usage:
+    // attending this event
+    const persons = guests === 1 ? ' person' : ' people';
+    return guests + persons;
+  }
+
+  showPlusOnes(guests: number): string {
+    // If bringing additional guest(s), show as "+n"
+    if (guests) {
+      return `+${guests}`;
+    }
+  }
+
+  booleanToText(bool: boolean): string {
+    // Change a boolean to 'Yes' or 'No' string
+    return bool ? 'Yes' : 'No';
+  }
 }
