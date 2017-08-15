@@ -18,7 +18,7 @@ module.exports = function(app, config) {
   });
 
 
-   // Check for an authenticated admin user
+   // Check for an authenticated admin usero
 const adminCheck = (req, res, next) => {
  const roles = req.user[config.NAMESPACE] || [];
  if (roles.indexOf('admin') > -1) {
@@ -35,6 +35,61 @@ const _eventListProjection = 'title startDatetime endDatetime viewPublic';
   app.get('/api/', (req, res) => {
     res.send('API works');
   });
+
+  //  POST a new RSVP
+  app.post('/api/rsvp/new', jwtCheck, (req,res) => {
+    Rsvp.findOne({eventId: req.body.eventId, userId: req.body.userId}, (err, existingRsvp) => {
+      if (err) {
+        return res.status(500).send({message: err.message});
+      }
+      if (existingRsvp) {
+        return res.status(409).send({message: 'You have already RSVPed to this event.'});
+      }
+      const rsvp = new Rsvp({
+        userId: req.body.userId,
+        name: req.body.name,
+        eventId: req.body.eventId,
+        attending: req.body.attending,
+        guests: req.body.guests,
+        comments: req.body.comments
+      });
+      rsvp.save((err) => {
+        if (err) {
+          return res.status(500).send({message: err.message});
+        }
+        res.send(rsvp);
+      });
+    });
+  });
+
+
+  // PUT (edit) an existing RSVP
+  app.put('/api/rsvp/:id', jwtCheck, (req, res) => {
+    Rsvp.findById(req.params.id, (err, rsvp) => {
+      if (err) {
+        return res.status(500).send({message: err.message});
+      }
+      if (!rsvp) {
+        return res.status(400).send({message: 'RSVP not found.'});
+      }
+      if (rsvp.userId !== req.user.sub) {
+        return res.status(401).send({message: 'You cannot edit someone else\'s RSVP.'})
+      }
+      rsvp.name = req.body.name;
+      rsvp.attending = req.body.attending;
+      rsvp.guests = req.body.guests;
+      rsvp.comments = req.body.comments;
+
+
+      rsvp.save(err => {
+        if (err) {
+          return res.status(500).send({message: err.message});
+        }
+        res.send(rsvp);
+      });
+    });
+  });
+
 
    // GET list of public events starting in the future
   app.get('/api/events', (req,res) => {

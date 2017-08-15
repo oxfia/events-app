@@ -5,11 +5,13 @@ import { UtilsService } from './../../../core/utils.service';
 import { FilterSortService } from './../../../core/filter-sort.service';
 import { RsvpModel } from './../../../core/models/rsvp.model';
 import { Subscription } from 'rxjs/Subscription';
+import { expandCollapse } from './../../../core/expand-collapse.animation';
 
 @Component({
   selector: 'app-rsvp',
   templateUrl: './rsvp.component.html',
-  styleUrls: ['./rsvp.component.scss']
+  styleUrls: ['./rsvp.component.scss'],
+  animations: [expandCollapse]
 })
 export class RsvpComponent implements OnInit, OnDestroy {
   @Input() eventId: string;
