@@ -10,11 +10,11 @@
   </p>
 
   <ng-template [ngIf]="!eventPast && rsvps">
-    <!-- User has RSPed  -->
+    <!-- User has RSVPed  -->
     <ng-template [ngIf]="userRsvp">
       <p class="card-block lead">You responded to this event with the following information:</p>
 
-
+    <ul *ngIf="!showEditForm" class="list-group list-group-flush">
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
           <strong>Name: </strong> {{userRsvp.name}}
@@ -29,13 +29,29 @@
           <strong>Comments: </strong> <span [innerHTML]="userRsvp.comments"></span>
         </li>
       </ul>
-      <!-- TODO: toggle RSVp form (update existing) will go here  -->
+    </ul>
+
+
+      <div class="card-block">
+        <button
+           class="btn btn-info"
+           [ngClass]="{'btn-info': !showEditForm, 'btn-warning': showEditForm}"
+           (click)="toggleEditForm()">{{editBtnText}}</button>
+
+           <app-rsvp-form
+               *ngIf="showEditForm"
+               [eventId]="eventId"
+               [rsvp]="userRsvp"
+               (submitRsvp)="onSubmitRsvp($event)"></app-rsvp-form>
+      </div>
     </ng-template>
 
     <!--No RSVP yet  -->
     <div *ngIf="!userRsvp" class="card-block">
       <p class="lead">Fill out the form below to respond:</p>
-      <!-- @TODO: RSVP form (add new RSVP) will go here  -->
+        <app-rsvp-form
+           [eventId]="eventId"
+           (submitRsvp)="onSubmitRsvp($event)"></app-rsvp-form>
     </div>
   </ng-template>
 
