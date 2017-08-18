@@ -1,4 +1,4 @@
-export class EventModel {
+class EventModel {
   constructor (
     public title: string,
     public location: string,
@@ -9,3 +9,19 @@ export class EventModel {
     public _id?: string,
   ) { }
 }
+
+
+class FormEventModel {
+  constructor(
+    public title: string,
+    public location: string,
+    public startDate: string,
+    public startTime: string,
+    public endDate: string,
+    public endTime: string,
+    public viewPublic: boolean,
+    public description?: string
+  ) { }
+}
+
+export { EventModel, FormEventModel };
