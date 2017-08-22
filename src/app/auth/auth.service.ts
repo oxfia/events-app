@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AUTH_CONFIG } from './auth.config';
 import * as auth0 from 'auth0-js';
-
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Rx';
 
 @Injectable()
 export class AuthService {
@@ -22,9 +23,14 @@ export class AuthService {
   loggedIn: boolean;
   loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
+  // Subscribe to token expiration stream
+  refreshSub: Subscription;
+
   constructor(private router: Router) {
-    // If authenticated, set local profile property admin        status,and update login status subject.
-    // If token is expired but user data still in         localStorage, log out.
+    // If authenticated, set local profile property admin
+    // status,and update login status subject.
+    // If token is expired but user data still in
+    // localStorage, log out.
     const lsProfile = localStorage.getItem('profile');
 
     if (this.tokenValid) {
@@ -32,6 +38,7 @@ export class AuthService {
       this.userProfile = JSON.parse(localStorage.getItem('profile'));
       this.isAdmin = localStorage.getItem('isAdmin') === 'true';
       this.setLoggedIn(true);
+      this.scheduleRenewal();
     } else if (!this.tokenValid && lsProfile) {
       this.logout();
     }
@@ -80,7 +87,7 @@ export class AuthService {
     });
   }
 
-  private _setSession(authResult, profile) {
+  private _setSession(authResult, profile?) {
     // Save session data and update login status subject
     const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + Date.now());
     // Set tokens and expiration in localStorage and props
@@ -89,10 +96,19 @@ export class AuthService {
     localStorage.setItem('expires_at', expiresAt);
     localStorage.setItem('profile', JSON.stringify(profile));
     this.userProfile = profile;
+    // If initial login, set profile annd admin information
+    if (profile) {
+      localStorage.setItem('profile', JSON.stringify(profile));
+      this.userProfile = profile;
+      this.isAdmin = this._checkAdmin(profile);
+      localStorage.setItem('isAdmin', this.isAdmin.toString());
+    }
     // Update login status in loggedIn$ stream
     this.isAdmin = this._checkAdmin(profile);
     localStorage.setItem('isAdmin', this.isAdmin.toString());
     this.setLoggedIn(true);
+    // Schedule acess token renewal
+    this.scheduleRenewal();
   }
 
   private _checkAdmin(profile) {
@@ -122,7 +138,7 @@ export class AuthService {
      }
    }
 
-  logout() {
+  logout(noRedirect?: boolean) {
     // Ensure all auth items removed from localStorage
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
@@ -134,12 +150,68 @@ export class AuthService {
     this.setLoggedIn(false);
     // Return to homepage
     this.router.navigate(['/']);
+    // Unschdule access token renewal
+    this.unscheduleRenewal();
+    // Return to homepage
+    if (noRedirect !== true) {
+      this.router.navigate(['/']);
+    }
   }
 
   get tokenValid(): boolean {
     // Check if current time is past access token's expiration
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return Date.now() < expiresAt;
+  }
+
+  renewToken() {
+    this.auth0.renewAuth({
+      redirectUri: AUTH_CONFIG.SILENCE_REDIRECT,
+      usePostMessage: true
+    }, (err, authResult) => {
+      if (authResult && authResult.access_token) {
+        this._setSession(authResult);
+      } else if (err) {
+        console.warn(`Could not renew token: ${err.errorDescription}`);
+        // Log out without redirecting to clear auth data
+        this.logout(true);
+        // Log in again
+        this.login();
+      }
+    });
+  }
+
+  scheduleRenewal() {
+    // if user isn't authenticated, do nothing
+    if (!this.tokenValid) { return; }
+    // Unsubscribe from previous expiration observable
+    this.unscheduleRenewal();
+    // Create and subscribe to expiration observable
+    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+    const expiresIn$ = Observable.of(expiresAt)
+      .flatMap(
+         expires => {
+           const now = Date.now();
+          //  Use timer to track delay until expiration
+          // to run the refresh at the proper time
+          return Observable.timer(Math.max(1, expires - now));
+         }
+      );
+
+      this.refreshSub = expiresIn$
+          .subscribe(
+            () => {
+              this.renewToken();
+              this.scheduleRenewal();
+            }
+        );
+  }
+
+
+  unscheduleRenewal() {
+    if (this.refreshSub) {
+      this.refreshSub.unsubscribe();
+    }
   }
 
 }
