@@ -16,7 +16,7 @@ export const AUTH_CONFIG: AuthConfig = {
   CLIENT_DOMAIN: 'concept.auth0.com',
   SILENCE_REDIRECT: 'http://localhost:8083/silent',
   AUDIENCE: 'http://localhost:8083/api/',
-  REDIRECT: `${ENV.BASE_URL}/callback`,
+  REDIRECT: `${ENV.BASE_URI}/callback`,
   SCOPE: 'openid profile',
   NAMESPACE: 'http://myapp.com/roles'
 };
