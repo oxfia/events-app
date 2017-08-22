@@ -50,6 +50,11 @@ export class UtilsService {
     return currentTab === tab;
   }
 
+  capitalize(str: string): string {
+    // Capitalize first letter of string
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
   displayCount(guests: number): string {
     // Example usage:
     // attending this event
