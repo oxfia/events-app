@@ -3,12 +3,6 @@ const jwks = require('jwks-rsa');
 const Event = require('./models/Event');
 const Rsvp = require('./models/Rsvp');
 
-/*
- |--------------------------------------
- | Authentication Middleware
- |--------------------------------------
- */
-
 module.exports = function(app, config) {
   // Authentication middleware
   const jwtCheck = jwt({
@@ -35,7 +29,7 @@ module.exports = function(app, config) {
 
 /*
  |--------------------------------------
- | API Routes
+ | API Routes`
  |--------------------------------------
  */
 
