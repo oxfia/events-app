@@ -8,6 +8,7 @@ const cors = require('cors');
 const config = require('./server/config');
 
 mongoose.Promise = require('bluebird');
+
 mongoose.connect(config.MONGO_URI, { useMongoClient: true });
 const monDb = mongoose.connection;
 
